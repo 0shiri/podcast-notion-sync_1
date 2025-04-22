@@ -1,0 +1,22 @@
+name: RSS→Notion 同期間
+
+on:
+  schedule:
+    - cron: '0 6 * * *'    # 毎日 15:00 JST に実行
+  workflow_dispatch:
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+      - run: pip install -r requirements.txt
+      - name: スクリプト実行
+        env:
+          NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
+          NOTION_DB_ID: ${{ secrets.NOTION_DB_ID }}
+          RSS_FEED:    ${{ secrets.RSS_FEED }}
+        run: python scripts/sync_latest.py
